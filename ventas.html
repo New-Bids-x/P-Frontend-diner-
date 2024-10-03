@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas - Confirmación de Pedido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Jost', sans-serif;
+        }
+
+        .category-button {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .category-button:hover {
+            background-color: #FFA726;
+            color: white;
+        }
+
+        .btn {
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #FF7043;
+            transform: scale(1.05);
+        }
+
+        /* Ocultar secciones por defecto */
+        .hidden {
+            display: none;
+        }
+    </style>
+
+    <script>
+        // Función para mostrar la sección seleccionada
+        function mostrarSeccion(seccion) {
+            document.querySelectorAll('.seccion').forEach(el => el.classList.add('hidden'));
+            document.getElementById(seccion).classList.remove('hidden');
+        }
+
+        // Función para incrementar o decrementar la cantidad de productos
+        function actualizarCantidad(id, operacion) {
+            const cantidadElemento = document.getElementById(id);
+            let cantidad = parseInt(cantidadElemento.innerText);
+
+            if (operacion === 'incrementar') {
+                cantidad++;
+            } else if (operacion === 'decrementar' && cantidad > 0) {
+                cantidad--;
+            }
+
+            cantidadElemento.innerText = cantidad;
+        }
+    </script>
+</head>
+
+<body class="bg-orange-400 text-gray-800 tracking-wide">
+
+    <div class="max-w-7xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-4">
+        <header class="px-6 py-4 bg-orange-500 text-white text-center">
+            <h2 class="text-4xl font-bold">PEDIDOS</h2>
+        </header>
+
+        <section class="px-6 py-4">
+            <div class="text-xl font-semibold text-gray-700">
+                ID del Pedido: <span class="text-red-500">125</span>
+            </div>
+
+            <div class="flex justify-center space-x-4 md:space-x-8 mt-4 flex-wrap">
+                <button class="category-button px-4 py-2 text-lg font-semibold text-gray-700 bg-gray-200 rounded-full"
+                    onclick="mostrarSeccion('pollos-fritos')">POLLOS FRITOS</button>
+                <button class="category-button px-4 py-2 text-lg font-semibold text-gray-700 bg-gray-200 rounded-full"
+                    onclick="mostrarSeccion('completos')">COMPLETOS</button>
+                <button class="category-button px-4 py-2 text-lg font-semibold text-gray-700 bg-gray-200 rounded-full"
+                    onclick="mostrarSeccion('refrescos')">REFRESCOS</button>
+            </div>
+        </section>
+
+        <!-- Sección Pollos Fritos (visible por defecto) -->
+        <section id="pollos-fritos" class="seccion p-6 space-y-6">
+            <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
+                <div class="flex items-center space-x-6">
+                    <img src="assets/img/carapollo2.png" alt="Pollo Frito Pequeño"
+                        class="w-24 h-24 rounded-lg shadow-lg">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">POLLO FRITO PEQUEÑO</h3>
+                        <span class="text-lg text-gray-600">10 BS</span>
+                    </div>
+
+                    
+                </div>
+
+                <div class="flex items-center space-x-4"> <!-- Ajuste aquí -->
+                    <button class="w-10 h-10 text-white bg-yellow-500 rounded-full btn"
+                        onclick="actualizarCantidad('cantidad-pollo-pequeno', 'decrementar')">-</button>
+                    <span id="cantidad-pollo-pequeno" class="text-xl font-semibold text-gray-700">1</span>
+                    <button class="w-10 h-10 text-white bg-red-500 rounded-full btn"
+                        onclick="actualizarCantidad('cantidad-pollo-pequeno', 'incrementar')">+</button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Sección Completos (inicialmente oculta) -->
+        <section id="completos" class="seccion p-6 space-y-6 hidden">
+            <div class="flex flex-col md:flex-row items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
+                <div class="flex items-center space-x-4 md:space-x-6">
+                    <img src="assets/img/sopa.png" alt="Sopa de Pollo" class="w-24 h-24 rounded-lg shadow-lg">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">SOPA DE POLLO</h3>
+                        <span class="text-lg text-gray-600">8 BS</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center space-x-4 mt-4 md:mt-0">
+                    <button class="w-10 h-10 text-white bg-yellow-500 rounded-full btn"
+                        onclick="actualizarCantidad('cantidad-sopa', 'decrementar')">-</button>
+                    <span id="cantidad-sopa" class="text-xl font-semibold text-gray-700">1</span>
+                    <button class="w-10 h-10 text-white bg-red-500 rounded-full btn"
+                        onclick="actualizarCantidad('cantidad-sopa', 'incrementar')">+</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Refrescos (inicialmente oculta) -->
+        <section id="refrescos" class="seccion p-6 space-y-6 hidden">
+            <div class="flex flex-col md:flex-row items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
+                <div class="flex items-center space-x-4 md:space-x-6">
+                    <img src="assets/img/coca.png" alt="Coca Cola" class="w-24 h-24 rounded-lg shadow-lg">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">COCA COLA</h3>
+                        <span class="text-lg text-gray-600">7 BS</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center space-x-4 mt-4 md:mt-0">
+                    <button class="w-10 h-10 text-white bg-yellow-500 rounded-full btn"
+                        onclick="actualizarCantidad('cantidad-coca', 'decrementar')">-</button>
+                    <span id="cantidad-coca" class="text-xl font-semibold text-gray-700">1</span>
+                    <button class="w-10 h-10 text-white bg-red-500 rounded-full btn"
+                        onclick="actualizarCantidad('cantidad-coca', 'incrementar')">+</button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="px-6 py-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-xl font-bold text-gray-800 mb-4 md:mb-0">TOTAL: <span>12 BS</span></div>
+            <div class="flex space-x-4">
+                <button class="px-6 py-2 bg-red-500 text-white rounded-lg font-medium text-lg btn">DETALLES DEL
+                    PEDIDO</button>
+                <button class="px-6 py-2 bg-yellow-500 text-white rounded-lg font-medium text-lg btn">CONFIRMAR
+                    PEDIDO</button>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>
