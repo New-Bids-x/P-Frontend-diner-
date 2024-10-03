@@ -8,10 +8,42 @@ body {
     @apply bg-orange-400 text-white font-Jost tracking-wider;
 }
 
+section {
+    @apply py-20 md:py-28;
+}
+
+
+h1 {
+    @apply text-3xl md:text-4xl xl:text-5xl font-bold;
+}
+
+
+
 .nav-link {
     @apply text-lg font-bold duration-300;
 }
 
 .nav-link:hover {
-    @apply text-black;
+    @apply text-yellow-400;
+}
+
+
+.btn {
+    @apply border border-red-500 bg-red-600 rounded-md px-5 py-2 duration-300;
+}
+
+.btn span {
+    @apply font-bold;
+}
+
+.btn:hover {
+    @apply opacity-90;
+}
+
+.btn_outline {
+    @apply bg-transparent;
+}
+
+.btn_outline:hover {
+    @apply bg-red-500
 }
