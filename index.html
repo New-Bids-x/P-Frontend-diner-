@@ -4,109 +4,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <!--~~~~~~~~~~~~~~~ Favicon ~~~~~~~~~~~~~~~-->
     <link rel="shortcut icon" href="assets/img/favicon.ico" type="image/*-icon">
-
     <!--~~~~~~~~~~~~~~~ Remix Icon ~~~~~~~~~~~~~~~-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css" />
     <!--~~~~~~~~~~~~~~~ Swiper's CSS ~~~~~~~~~~~~~~~-->
-
     <link rel="stylesheet" href="./output.css">
-    <title>Plant Website || TailwindCSS </title>
+    <title>Plant Website || TailwindCSS</title>
 </head>
 
 <body>
     <!--~~~~~~~~~~~~~~~ Header ~~~~~~~~~~~~~~~-->
     <header id="navbar" class="bg-black fixed w-full top-0 left-0 z-50">
         <nav class="container flex items-center justify-between h-16 sm:h-20">
-            <div class="font-Lobster sm:text-2x1">New Bids.</div>
-
+            <div class="font-Lobster sm:text-2xl">New Bids.</div>
             <div id="nav-menu" class="absolute top-0 left-[-100%] min-h-[80vh] w-full bg-orange-400/80 
-                backdrop-blur-sm flex items-center justify-center duration-300 overflow-hidden">
-                <ul class="flex flex-col items-center gap-8">
-                    <li>
-                        <a href="#home" class="nav-link">Inicio</a>
-                    </li>
-                    <li>
-
-                    <li>
-                        <a href="#about" class="nav-link">About</a>
-                    </li>
-
-                    </li>
-                    <a href="#popular" class="nav-link">Popular</a>
-                    </li>
-                    </li>
-                    <a href="#review" class="nav-link">Review</a>
-                    </li>
+                backdrop-blur-sm flex items-center justify-center duration-300 
+                overflow-hidden lg:static lg:min-h-fit lg:bg-transparent lg:w-auto ">
+                <ul class="flex flex-col items-center gap-8 lg:flex-row">
+                    <li><a href="#home" class="nav-link">Inicio</a></li>
+                    <li><a href="#about" class="nav-link">Sobre Nosotros</a></li>
+                    <li><a href="#popular" class="nav-link">Favoritos</a></li>
+                    <li><a href="#review" class="nav-link">Reseñas</a></li>
                 </ul>
-                <div class="absolute bottom-0 -right-10 opacity-90">
-                    <img src="assets//img/leaf-1.png" alt="leaf_image" class="w-32">
+                <div class="absolute bottom-0 -right-10 opacity-90 lg:hidden">
+                    <img src="assets/img/leaf-1.png" alt="leaf_image" class="w-32">
                 </div>
-
-                <div class="absolute -top-5 left-5 rotate-90 opacity-90">
-                    <img src="assets//img/leaf-2.png" alt="leaf_image" class="w-32">
+                <div class="absolute -top-5 left-5 rotate-90 opacity-90 lg:hidden">
+                    <img src="assets/img/leaf-2.png" alt="leaf_image" class="w-32">
                 </div>
-
-
             </div>
-            <div class="text-x1 sm:text-3x1 cursor-pointer z-50">
+            <div class="text-xl sm:text-3xl cursor-pointer z-50 lg:hidden">
                 <i class="ri-menu-4-line" id="hamburger"></i>
             </div>
         </nav>
-
     </header>
 
+    <!--~~~~~~~~~~~~~~~ Main Content ~~~~~~~~~~~~~~~-->
     <main>
-        <!--~~~~~~~~~~~~~~~ Home ~~~~~~~~~~~~~~~-->
-        <section id="home">
-
+        <!--~~~~~~~~~~~~~~~ Home Section ~~~~~~~~~~~~~~~-->
+        <section id="home" class="relative pt-20">
+            <div class="container mx-auto px-4">
+                <div class="w-64 h-64 bg-orange-100 rounded-full blur-3xl -z-10 opacity-5 absolute top-1/2 left-1/2
+                transform -translate-x-1/2 -translate-y-1/2">
+                </div>
+            </div>
+            <div class="flex flex-col items-center gap-5 lg:flex-row">
+                <div class="w-full space-y-5 lg:w-1/2 px-5 lg:px-10">
+                    <h1>
+                        <span class="text-black">Sabor</span> y calidad <br>
+                        inigualable
+                        <span class="text-black">pollos</span> con <br>
+                        la reseta especial
+                    </h1>
+                    <p class="text-slate-300 font-Lobster">
+                        Disfruta de una experiencia culinaria única donde cada bocado cuenta una historia!
+                    </p>
+                    <div class="flex flex-col gap-2 sw:flex-row md:gap-4 lg:pt-5 x1:pt-10">
+                        <button class="btn">
+                            <span>Pide ya</span>
+                            <i class="ri-leaf-line"></i>
+                        </button>
+                        <button class="btn btn_outline">
+                            <span>Ver Menu</span>
+                            <i class="ri-leaf-line"></i>
+                        </button>
+                    </div>
+                    <p class="text-xs font-Lobster text-slate-300">
+                        Entregas a tu hogar.
+                    </p>
+                    <div class="flex items-center gap-5 text-lg lg:pt-10 opacity-100">
+                        <i
+                            class="ri-facebook-fill text-slate-300 hover:text-red-500 duration-300 cursor-pointer opacity-100"></i>
+                        <i class="ri-twitter-line text-slate-300 hover:text-red-500 duration-300 cursor-pointer"></i>
+                        <i class="ri-instagram-line text-slate-300 hover:text-red-500 duration-300 cursor-pointer"></i>
+                        <i class="ri-linkedin-fill text-slate-300 hover:text-red-500 duration-300 cursor-pointer"></i>
+                    </div>
+                </div>
+                <!--~~~~~~~~ Image ~~~~~~~~~~~~~~~-->
+                <div class="w-full relative lg:w-1/2">
+                    <img src="assets/img/polloE.png" alt="home_image">
+                </div>
+                <!--~~~~~~~~ Floating Icons ~~~~~~~~~~~~~~~-->
+                <div class="absolute -top-10 right-0 opacity-30 xl:top-5 animate-movingY ">
+                    <i class="ri-leaf-line text-6xl text-black"></i>
+                </div>
+                <div class="absolute bottom-0 left-0 opacity-30 xl:bottom-12 animate-rotating">
+                    <i class="ri-flower-line text-6xl text-red-500 "></i>
+                </div>
+                <div class="hidden absolute -top-8 -left-5 opacity-30 lg:block animate-scalingUp">
+                    <i class="ri-plant-line text-6xl text-blue-500"></i>
+                </div>
+            </div>
         </section>
 
-        <!--~~~~~~~~~~~~~~~ Services ~~~~~~~~~~~~~~~-->
-        <div>
+        <!--~~~~~~~~~~~~~~~ Services Section ~~~~~~~~~~~~~~~-->
+        <section id="services" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-8 bg-black">Menu</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
+                        <img src="assets/img/polloE.png" alt="Descripción de la imagen" class="mb-4"
+                            style="width: 350px; height: 300px;">
 
-        </div>
+                        <h3 class="text-xl font-bold mb-2 bg-black text-white text-center p-2 rounded">Pollo Especial
+                        </h3>
+                        <p class="text-black text-center">Un jugoso pollo marinado en especias secretas, asado a la
+                            perfección y servido con guarniciones frescas.</p>
+                    </div>
 
-        <!--~~~~~~~~~~~~~~~ About us ~~~~~~~~~~~~~~~-->
-        <section id="about">
+                    <div class="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
+                        <img src="assets/img/polloE.png" alt="Descripción de la imagen" class="mb-4"
+                            style="width: 350px; height: 300px;">
 
+                        <h3 class="text-xl font-bold mb-2 bg-black text-white text-center p-2 rounded">Pollo Especial
+                        </h3>
+                        <p class="text-black text-center">Un jugoso pollo marinado en especias secretas, asado a la
+                            perfección y servido con guarniciones frescas.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg flex flex-col items-center">
+                        <img src="assets/img/polloE.png" alt="Descripción de la imagen" class="mb-4"
+                            style="width: 350px; height: 300px;">
+
+                        <h3 class="text-xl font-bold mb-2 bg-black text-white text-center p-2 rounded">Pollo Especial
+                        </h3>
+                        <p class="text-black text-center">Un jugoso pollo marinado en especias secretas, asado a la
+                            perfección y servido con guarniciones frescas.</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <!--~~~~~~~~~~~~~~~ Popular ~~~~~~~~~~~~~~~-->
-        <section id="popular">
-
+        <!--~~~~~~~~~~~~~~~ About Us Section ~~~~~~~~~~~~~~~-->
+        <section id="about" class="py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-8">Sobre Nosotros</h2>
+                <p class="mb-8">
+                    Somos una empresa dedicada a llevar sabores frescos y auténticos a cada hogar y espacio de trabajo.
+                    Nuestra misión es hacer del mundo un lugar más sabroso, un plato a la vez. Ya sea que busques
+                    disfrutar de un delicioso pollo especial o crear un menú memorable, contamos con la experiencia para
+                    ayudarte a lograrlo.
+                </p>
+                <img src="assets/img/polloE.png" alt="About Us Image" class="mx-auto rounded-lg shadow-lg" ;>
+            </div>
         </section>
 
-        <!--~~~~~~~~~~~~~~~ Review ~~~~~~~~~~~~~~~-->
-        <section id="review">
+        <!--~~~~~~~~~~~~~~~ Popular Section ~~~~~~~~~~~~~~~-->
+        <section id="review" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-8 bg-black
+                ">Productos Favoritos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Product 1 -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <img src="assets/img/polloE.png" alt="About Us Image" class="mx-auto rounded-lg shadow-lg" ;>
+                        <h3 class="text-xl font-bold mb-2 text-black">Pollo Broaster</h3>
+                        <p class="mb-4 text-black">Price: $25</p>
+                        <button class="btn">Comprar</button>
+                    </div>
+                    <!-- Product 2 -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <img src="assets/img/polloE.png" alt="About Us Image" class="mx-auto rounded-lg shadow-lg" ;>
+                        <h3 class="text-xl font-bold mb-2 text-black">Pollo Broaster</h3>
+                        <p class="mb-4 text-black">Price: $25</p>
+                        <button class="btn">Comprar</button>
+                    </div>
+                    <!-- Product 3 -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <img src="assets/img/polloE.png" alt="About Us Image" class="mx-auto rounded-lg shadow-lg" ;>
+                        <h3 class="text-xl font-bold mb-2 text-black">Pollo Broaster</h3>
+                        <p class="mb-4 text-black">Price: $25</p>
+                        <button class="btn">Comprar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!--~~~~~~~~~~~~~~~ Review Section ~~~~~~~~~~~~~~~-->
+        <section id="review" class="py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-8">Reseñas de pedidos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <p class="mb-4 text-black">"Exelente servicio y atencion de primer nivel."
+                        </p>
+                        <span class="block text-yellow-500"><i class="ri-star-fill"></i> <i class="ri-star-fill"></i> <i
+                                class="ri-star-fill"></i> <i class="ri-star-fill"></i> <i
+                                class="ri-star-half-line"></i></span>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <p class="mb-4 text-black">"Exelente servicio y atencion de primer nivel."
+                        </p>
+                        <span class="block text-yellow-500"><i class="ri-star-fill"></i> <i class="ri-star-fill"></i> <i
+                                class="ri-star-fill"></i> <i class="ri-star-fill"></i> <i
+                                class="ri-star-line"></i></span>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <p class="mb-4 text-black">"Exelente servicio y atencion de primer nivel."
+                        </p>
+                        <span class="block text-yellow-500"><i class="ri-star-fill"></i> <i class="ri-star-fill"></i> <i
+                                class="ri-star-fill"></i> <i class="ri-star-fill"></i> <i
+                                class="ri-star-fill"></i></span>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
     <!--~~~~~~~~~~~~~~~ Footer ~~~~~~~~~~~~~~~-->
-    <footer>
-        <!-- newsletter -->
-
-        <!-- social icon -->
-
-        <!-- content -->
-
-        <!-- copyright -->
-
-        <!-- floral image -->
+    <footer class="py-8 bg-black text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h3 class="text-2xl font-bold mb-4">Registrate</h3>
+            <form class="mb-8">
+                <input type="email" placeholder="Ingrese su email" class="p-2 rounded-l-lg">
+                <button type="submit" class="p-2 bg-orange-400 rounded-r-lg">registrarse</button>
+            </form>
+            <div class="flex justify-center gap-5 text-lg mb-4">
+                <i class="ri-facebook-fill hover:text-orange-400 duration-300 cursor-pointer"></i>
+                <i class="ri-twitter-fill hover:text-orange-400 duration-300 cursor-pointer"></i>
+                <i class="ri-instagram-line hover:text-orange-400 duration-300 cursor-pointer"></i>
+                <i class="ri-linkedin-fill hover:text-orange-400 duration-300 cursor-pointer"></i>
+            </div>
+            <p>&copy; 2024 Proyecto Programacion web. Todos los derechos Reservados.</p>
+            <img src="assets/img/c" alt="New Bits" class="mx-auto mt-8 opacity-50">
+        </div>
     </footer>
 
     <!--~~~~~~~~~~~~~~~ Scroll Up ~~~~~~~~~~~~~~~-->
+    <a href="#navbar" class="fixed bottom-4 right-4 bg-orange-400 p-4 rounded-full shadow-lg">
+        <i class="ri-arrow-up-s-line text-white"></i>
+    </a>
 
     <!--~~~~~~~~~~~~~~~ Swiper JS ~~~~~~~~~~~~~~~-->
-
     <!--~~~~~~~~~~ SCROLLREVEAL ~~~~~~~~~~-->
-
     <!--~~~~~~~~~~ mainjs ~~~~~~~~~~-->
     <script src="main.js"></script>
-
 </body>
 
 </html>
