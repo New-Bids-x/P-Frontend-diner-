@@ -1,6 +1,6 @@
 # 🍽️ P-Frontend-diner
 
-Este es el frontend del proyecto **Diner**, una aplicación web para la gestión y automatización de restaurantes. Este repositorio contiene la interfaz de usuario desarrollada en **React**.
+Este es el frontend del proyecto **Diner**, una aplicación web para la gestión y automatización de restaurantes. Este repositorio contiene la interfaz de usuario desarrollada en **React** Y **Tailwind**.
 
 ## 📋 Tabla de Contenidos
 - [🚀 Requisitos Previos](#-requisitos-previos)
