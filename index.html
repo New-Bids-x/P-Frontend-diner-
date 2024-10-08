@@ -26,6 +26,9 @@
                     <li><a href="#about" class="nav-link">Sobre Nosotros</a></li>
                     <li><a href="#popular" class="nav-link">Favoritos</a></li>
                     <li><a href="#review" class="nav-link">Reseñas</a></li>
+                    <li><a href="#carrito" class="text-white hover:text-red-300">
+                            <i class="ri-shopping-cart-line text-2xl"></i>
+                        </a></li>
                 </ul>
                 <div class="absolute bottom-0 -right-10 opacity-90 lg:hidden">
                     <img src="assets/img/leaf-1.png" alt="leaf_image" class="w-32">
@@ -61,13 +64,15 @@
                         Disfruta de una experiencia culinaria única donde cada bocado cuenta una historia!
                     </p>
                     <div class="flex flex-col gap-2 sw:flex-row md:gap-4 lg:pt-5 x1:pt-10">
-                        <button class="btn">
-                            <span>Pide ya</span>
-                            <i class="ri-leaf-line"></i>
+                        <button class="btn bg-green-500 text-white flex items-center px-4 py-2 rounded">
+                            <span class="mr-2">Pide ya</span>
+                            <i class="ri-shopping-cart-line"></i> <!-- Icono de carrito -->
                         </button>
-                        <button class="btn btn_outline">
-                            <span>Ver Menu</span>
-                            <i class="ri-leaf-line"></i>
+
+                        <!-- Botón "Ver Menu" -->
+                        <button class="btn btn_outline border-black text-white flex items-center px-4 py-2 rounded ">
+                            <span class="mr-2">Ver Menu</span>
+                            <i class="ri-menu-line"></i> <!-- Icono de hoja -->
                         </button>
                     </div>
                     <p class="text-xs font-Lobster text-slate-300">
@@ -159,21 +164,21 @@
                     <div class="bg-white p-8 rounded-lg shadow-lg">
                         <img src="assets/img/polloE.png" alt="About Us Image" class="mx-auto rounded-lg shadow-lg" ;>
                         <h3 class="text-xl font-bold mb-2 text-black">Pollo Broaster</h3>
-                        <p class="mb-4 text-black">Price: $25</p>
+                        <p class="mb-4 text-black">Precio: $25</p>
                         <button class="btn">Comprar</button>
                     </div>
                     <!-- Product 2 -->
                     <div class="bg-white p-8 rounded-lg shadow-lg">
                         <img src="assets/img/polloE.png" alt="About Us Image" class="mx-auto rounded-lg shadow-lg" ;>
                         <h3 class="text-xl font-bold mb-2 text-black">Pollo Broaster</h3>
-                        <p class="mb-4 text-black">Price: $25</p>
+                        <p class="mb-4 text-black">Precio: $25</p>
                         <button class="btn">Comprar</button>
                     </div>
                     <!-- Product 3 -->
                     <div class="bg-white p-8 rounded-lg shadow-lg">
                         <img src="assets/img/polloE.png" alt="About Us Image" class="mx-auto rounded-lg shadow-lg" ;>
                         <h3 class="text-xl font-bold mb-2 text-black">Pollo Broaster</h3>
-                        <p class="mb-4 text-black">Price: $25</p>
+                        <p class="mb-4 text-black">Precio: $25</p>
                         <button class="btn">Comprar</button>
                     </div>
                 </div>
@@ -215,7 +220,7 @@
     <footer class="py-8 bg-black text-white">
         <div class="container mx-auto px-4 text-center">
             <h3 class="text-2xl font-bold mb-4">Registrate</h3>
-            <form class="mb-8">
+            <form class="mb-8 text-black">
                 <input type="email" placeholder="Ingrese su email" class="p-2 rounded-l-lg">
                 <button type="submit" class="p-2 bg-orange-400 rounded-r-lg">registrarse</button>
             </form>
