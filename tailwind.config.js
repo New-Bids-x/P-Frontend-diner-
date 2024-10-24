@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./*.{html,js}"], // Corregido: Se utilizaron comillas correctamente.
+  content: ["./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",], // Corregido: Se utilizaron comillas correctamente.
   theme: {
     screens: {
       sw: "340px",
