@@ -1,11 +1,14 @@
 // pages/_app.jsx
-import './styles/globals.css'; // Importar con la ruta correcta
-import Layout from './components/Layout'; // Asegúrate de importar el componente Layout si no lo has hecho
+import '../styles/globals.css';
+import Layout from '../components/Layout';
+import { NavbarProvider } from '../context/NavbarContext';
 
 export default function App({ Component, pageProps }) {
     return (
-        <Layout>
-            <Component {...pageProps} />
-        </Layout>
+        <NavbarProvider>
+            <Layout>
+                <Component {...pageProps} />
+            </Layout>
+        </NavbarProvider>
     );
 }
