@@ -3,30 +3,50 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import CartDropdown from '../../components/cartDropdown/CartDropdown';
 import Link from 'next/link';
+import axios from 'axios';
+
 const Home = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
-
     const [menuOpen, setMenuOpen] = useState(false);
+    const [products, setProducts] = useState([]); // Estado para almacenar los productos
+    const [userName, setUserName] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) throw new Error('No autenticado');
+
+                const response = await axios.get('http://localhost:8000/api/user', {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setUserName(response.data.name);
+            } catch (error) {
+                console.error('Error al obtener datos del usuario:', error);
+                setUserName('Invitado');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+
 
     useEffect(() => {
         setIsMounted(true);
-        // Inicializar el carrito vacío
-        setCartItems([]);
+        setCartItems([]); // Inicializar el carrito vacío
     }, []);
-
-    //     // const toggleCartDropdown = () => setCartOpen(!cartOpen);
-    //     // const getTotalItems = () =>
-    //     //     cartItems.reduce((total, item) => total + item.quantity, 0);
 
     const handleMenuOptionClick = () => {
         setMenuOpen(false);
     };
 
     const toggleMenu = () => setMenuOpen(!menuOpen);
-
-
 
     // Función para agregar productos al carrito
     const addToCart = (item) => {
@@ -42,12 +62,27 @@ const Home = () => {
     };
 
 
+
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/products');
+            console.log('Datos obtenidos del backend:', response.data);
+
+            // Filtra los productos con categoría "2"
+            const filteredProducts = Array.isArray(response.data.products)
+                ? response.data.products.filter(product => product.categoria === "2")
+                : [];
+
+            setProducts(filteredProducts);
+        } catch (error) {
+            console.error('Error al obtener los productos:', error);
+            setProducts([]); // Asegura que products sea un array incluso si hay un error
+        }
+    };
+
+
     useEffect(() => {
-        setCartItems([ // Inicializar el carrito con algunos productos de ejemplo
-            { id: 1, name: 'Pollo Asado', price: '10.00', image: '/assets/img/polloE.png' },
-            { id: 2, name: 'Pollo Asado', price: '5.00', image: '/assets/img/polloE.png' },
-            { id: 3, name: 'Pollo Asado', price: '10.00', image: '/assets/img/polloE.png' },
-        ]);
+        fetchProducts();
     }, []);
 
     const toggleCartDropdown = () => {
@@ -57,7 +92,6 @@ const Home = () => {
     const getTotalItems = () => {
         return cartItems.length;
     };
-
 
     return (
         <>
@@ -73,7 +107,6 @@ const Home = () => {
             <header id="navbar" className="bg-black fixed w-full top-0 left-0 z-50">
                 <nav className="container flex items-center justify-between h-16 sm:h-20">
                     <div className="font-Lobster sm:text-2xl">New Bids.</div>
-
                     <div
                         id="nav-menu"
                         className={`absolute top-0 ${menuOpen ? 'left-0' : 'left-[-100%]'} min-h-[80vh] w-full bg-orange-400/80 backdrop-blur-sm flex items-center justify-center duration-300 lg:static lg:min-h-fit lg:bg-transparent lg:w-auto`}
@@ -85,7 +118,6 @@ const Home = () => {
                             <li>
                                 <a href="#about" className="nav-link" onClick={handleMenuOptionClick}>Sobre Nosotros</a>
                             </li>
-
                             <li>
                                 <a href="#review" className="nav-link" onClick={handleMenuOptionClick}>Menu</a>
                             </li>
@@ -108,7 +140,6 @@ const Home = () => {
                             </li>
                         </ul>
                     </div>
-
                     <div
                         className="text-xl sm:text-3xl cursor-pointer z-50 lg:hidden"
                         onClick={toggleMenu}
@@ -138,7 +169,6 @@ const Home = () => {
                                     <span className="mr-2">Pide ya</span>
                                     <i className="ri-shopping-cart-line"></i>
                                 </button>
-
                                 <button className="btn btn_outline border-black text-white flex items-center px-4 py-2 rounded">
                                     <span className="mr-2">Ver Menu</span>
                                     <i className="ri-menu-line"></i>
@@ -158,112 +188,57 @@ const Home = () => {
                     </div>
                 </section>
 
-
-
                 <section id="review" className="py-16 bg-gray-100">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl font-bold mb-8 bg-black">Menu</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div className="bg-white p-8 rounded-lg shadow-lg">
-                                <Link href="productos/info-producto" passHref>
+                            {products.map((product) => (
+                                <div key={product.id} className="bg-white p-8 rounded-lg shadow-lg">
                                     <div className="cursor-pointer">
-                                        <Image
-                                            src="/assets/img/polloE.png"
-                                            alt="Pollo Asado"
-                                            className="mx-auto rounded-lg shadow-lg"
-                                            width={200}
-                                            height={200}
-                                        />
-                                        <h3 className="text-xl font-bold mb-2 text-black">Pollo Asado</h3>
-                                        <p className="mb-4 text-black">Precio: $10.00</p>
+                                        <Link href="/productos/info-producto">
+                                            <div className="w-full h-56 flex items-center justify-center mb-4 overflow-hidden">
+                                                <Image
+                                                    src={product.imagen ? `http://localhost:8000/images/${product.imagen}` : '/assets/img/default.png'}
+                                                    alt={product.nombre || 'Imagen predeterminada'}
+                                                    width={250}
+                                                    height={250}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        </Link>
+                                        <h3 className="text-xl font-bold mb-2 text-black">{product.nombre}</h3>
+                                        <p className="mb-4 text-black">Precio: ${product.precio}</p>
                                         <button
                                             className="btn bg-green-500 text-white"
-                                            onClick={() => addToCart({ name: 'Pollo Asado', price: '10.00' })}
+                                            onClick={() => addToCart({ id: product.id, name: product.nombre, price: product.precio })}
                                         >
                                             Comprar
                                         </button>
                                     </div>
-                                </Link>
-                            </div>
-
-                            <div className="bg-white p-8 rounded-lg shadow-lg">
-                                <Link href="/productos/info-producto" passHref>
-                                    <div className="cursor-pointer">
-                                        <Image
-                                            src="/assets/img/polloE.png"
-                                            alt="Pollo Asado"
-                                            className="mx-auto rounded-lg shadow-lg"
-                                            width={200}
-                                            height={200}
-                                        />
-                                        <h3 className="text-xl font-bold mb-2 text-black">Pollo Asado</h3>
-                                        <p className="mb-4 text-black">Precio: $10.00</p>
-                                        <button
-                                            className="btn bg-green-500 text-white"
-                                            onClick={() => addToCart({ name: 'Pollo Asado', price: '10.00' })}
-                                        >
-                                            Comprar
-                                        </button>
-                                    </div>
-                                </Link>
-                            </div>
-
-                            <div className="bg-white p-8 rounded-lg shadow-lg">
-                                <Link href="/productos/info-producto" passHref>
-                                    <div className="cursor-pointer">
-                                        <Image
-                                            src="/assets/img/polloE.png"
-                                            alt="Pollo Asado"
-                                            className="mx-auto rounded-lg shadow-lg"
-                                            width={200}
-                                            height={200}
-                                        />
-                                        <h3 className="text-xl font-bold mb-2 text-black">Pollo Asado</h3>
-                                        <p className="mb-4 text-black">Precio: $10.00</p>
-                                        <button
-                                            className="btn bg-green-500 text-white"
-                                            onClick={() => addToCart({ name: 'Pollo Asado', price: '10.00' })}
-                                        >
-                                            Comprar
-                                        </button>
-                                    </div>
-                                </Link>
-                            </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>
-                {/* Sección Sobre Nosotros */}
-                <section id="about" class="py-16">
-                    <div class="container mx-auto px-4 text-center">
-                        <h2 class="text-3xl font-bold mb-8">Sobre Nosotros</h2>
-                        <p class="mb-8">
+
+                <section id="about" className="py-16">
+                    <div className="container mx-auto px-4 text-center">
+                        <h2 className="text-3xl font-bold mb-8">Sobre Nosotros</h2>
+                        <p className="mb-8">
                             Somos una empresa dedicada a llevar sabores frescos y auténticos a cada hogar y espacio de trabajo.
-                            Nuestra misión es hacer del mundo un lugar más sabroso, un plato a la vez. Ya sea que busques
-                            disfrutar de un delicioso pollo especial o crear un menú memorable, contamos con la experiencia para
-                            ayudarte a lograrlo.
+                            Nuestra misión es hacer del mundo un lugar más sabroso, un plato a la vez.
                         </p>
                         <img
                             src="/assets/img/logopollo.png"
                             alt="About Us Image"
-                            class="mx-auto rounded-lg shadow-lg w-1/2 sm:w-1/3 md:w-1/4"
+                            className="mx-auto rounded-lg shadow-lg w-1/2 sm:w-1/3 md:w-1/4"
                         />
                     </div>
                 </section>
-
-            </main >
-
-            <footer className="py-8 bg-black text-white">
-                <div className="container mx-auto px-4 text-center">
-                    <h3 className="text-2xl font-bold mb-4">Regístrate</h3>
-                    <form className="mb-8 text-black">
-                        <input type="email" placeholder="Ingrese su email" className="p-2 rounded-l-lg" />
-                        <button type="submit" className="p-2 bg-orange-400 rounded-r-lg">Registrarse</button>
-                    </form>
-                    <p>&copy; 2024 Proyecto Programación Web. Todos los derechos reservados.</p>
-                </div>
-            </footer>
+            </main>
         </>
     );
 };
 
 export default Home;
+
