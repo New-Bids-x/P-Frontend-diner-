@@ -1,36 +1,58 @@
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import HistorialProducto from '../historialPedidos/HistorialPedidos';
+import Image from 'next/image';
+import { FaHistory, FaShoppingCart } from 'react-icons/fa';
 
 const VentaProducto = () => {
-    const [activeSection, setActiveSection] = useState('pollos-fritos');
-    const [showHistorial, setShowHistorial] = useState(false);
-    const [quantities, setQuantities] = useState({
-        'cantidad-pollo-pequeno': 1,
-        'cantidad-sopa': 1,
-        'cantidad-coca': 1,
-    });
+    const [activeSection, setActiveSection] = useState('');
+    const [categories, setCategories] = useState([]);
+    const [productsByCategory, setProductsByCategory] = useState([]);
+    const [quantities, setQuantities] = useState({});
+    const [orderId, setOrderId] = useState(''); // Para el ID del pedido
+
+    // Obtener categorías y productos desde el backend
+    useEffect(() => {
+        const fetchCategoriesAndProducts = async () => {
+            try {
+                const response = await axios.get('http://127.0.0.1:8000/api/products2');
+                const fetchedCategories = response.data.categories;
+                setCategories(fetchedCategories);
+
+                // Establecer la primera categoría como activa por defecto
+                if (fetchedCategories.length > 0) {
+                    setActiveSection(fetchedCategories[0].categoria);
+                    setProductsByCategory(fetchedCategories[0].productos);
+                }
+            } catch (error) {
+                console.error("Error al cargar las categorías y productos:", error);
+                alert("No se pudieron cargar las categorías o productos.");
+            }
+        };
+
+        fetchCategoriesAndProducts();
+    }, []);
 
     const updateQuantity = (id, operation) => {
         setQuantities((prevQuantities) => {
-            const currentQuantity = prevQuantities[id];
+            const currentQuantity = prevQuantities[id] || 0;
             const newQuantity =
                 operation === 'incrementar' ? currentQuantity + 1 : Math.max(0, currentQuantity - 1);
             return { ...prevQuantities, [id]: newQuantity };
         });
     };
 
-    const total = quantities['cantidad-pollo-pequeno'] * 10 + quantities['cantidad-sopa'] * 8 + quantities['cantidad-coca'] * 7;
+    const total = productsByCategory.reduce((acc, product) => {
+        const quantity = quantities[product.id] || 0;
+        return acc + (product.precio * quantity);
+    }, 0);
 
     const confirmarPedido = async () => {
         const pedidoDate = {
-            pedido: [
-                { nombre: 'Pollo Frito Pequeño', cantidad: quantities['cantidad-pollo-pequeno'] },
-                { nombre: 'Sopa de Pollo', cantidad: quantities['cantidad-sopa'] },
-                { nombre: 'Coca Cola', cantidad: quantities['cantidad-coca'] },
-            ],
-            total: `${total} BS`
+            pedido: productsByCategory.map((product) => ({
+                nombre: product.nombre,
+                cantidad: quantities[product.id] || 0,
+            })),
+            total: `${total.toFixed(2)} BS`,
         };
 
         console.log("Datos del pedido:", JSON.stringify(pedidoDate, null, 2));
@@ -38,141 +60,104 @@ const VentaProducto = () => {
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/pedidos', pedidoDate);
             console.log("Respuesta del backend:", response.data);
+            setOrderId(response.data.id); // Guardar el ID del pedido recibido del backend
             alert("Pedido guardado correctamente.");
         } catch (error) {
             console.error("Error al guardar el pedido:", error.response);
             alert("Error al guardar el pedido.");
         }
     };
-    
-    const toggleHistorial = () => {
-        setShowHistorial(!showHistorial); // Cambia el estado de visibilidad
+
+    const handleCategoryChange = (categoryId) => {
+        const selectedCategory = categories.find((category) => category.categoria === categoryId);
+        setActiveSection(categoryId);
+        setProductsByCategory(selectedCategory ? selectedCategory.productos : []);
     };
-
-
 
     return (
         <div className="bg-red-100">
-            {/* Header */}
-            <header className="bg-red-900 fixed w-full z-50">
-                <nav className="container mx-auto flex items-center justify-between h-16">
-                    <div className="text-white font-bold text-xl">New Bids</div>
-                    <div className="hidden lg:flex space-x-6">
-                        <a href="#inicio" className="text-white hover:text-red-300">Inicio</a>
-                        <a href="#productos" className="text-white hover:text-red-300">Historial</a>
-                        <a href="#notificaciones" className="text-white hover:text-red-300">
-                            <i className="ri-notification-3-line text-2xl"></i>
-                        </a>
-                        <a href="#carrito" className="text-white hover:text-red-300">
-                            <i className="ri-shopping-cart-line text-2xl"></i>
-                        </a>
-                    </div>
-                    <div className="lg:hidden">
-                        <button id="hamburger" className="text-white text-3xl">
-                            <i className="ri-menu-line"></i>
+            {/* Barra de Navegación */}
+            <nav className="bg-red-900 text-white py-4 shadow-md">
+                <div className="container mx-auto flex justify-between items-center">
+                    <div className="flex space-x-6">
+                        <button className="flex items-center">
+                            <FaHistory className="mr-2" />
+                            Historial
+                        </button>
+                        <button className="flex items-center">
+                            <FaShoppingCart className="mr-2" />
+                            Carrito
                         </button>
                     </div>
-                </nav>
-            </header>
+                    <div className="text-lg font-semibold">
+                        Pedido ID: {orderId || 'En progreso'}
+                    </div>
+                </div>
+            </nav>
 
             <main className="pt-20">
-                {/* Sección de Pedidos */}
                 <section id="inicio" className="container mx-auto bg-white shadow-lg rounded-lg overflow-hidden mt-8">
                     <header className="px-6 py-4 bg-red-900 text-white text-center">
                         <h2 className="text-4xl font-bold">PEDIDOS</h2>
                     </header>
 
                     <section className="px-6 py-4">
-                        <div className="text-xl font-semibold text-gray-700">
-                            ID del Pedido: <span className="text-red-500">125</span>
-                        </div>
-
                         <div className="flex justify-center space-x-4 md:space-x-8 mt-4 flex-wrap">
-                            {['pollos-fritos', 'completos', 'refrescos'].map((section) => (
+                            {/* Botones dinámicos para categorías */}
+                            {categories.map((category) => (
                                 <button
-                                    key={section}
-                                    className="category-button px-4 py-2 text-lg font-semibold text-gray-700 bg-red-200 rounded-full"
-                                    onClick={() => setActiveSection(section)}
+                                    key={category.categoria}
+                                    className={`category-button px-4 py-2 text-lg font-semibold text-gray-700 ${activeSection === category.categoria
+                                        ? 'bg-red-500 text-white'
+                                        : 'bg-red-200'
+                                        } rounded-full`}
+                                    onClick={() => handleCategoryChange(category.categoria)}
                                 >
-                                    {section === 'pollos-fritos' ? 'POLLOS FRITOS' : section === 'completos' ? 'COMPLETOS' : 'REFRESCOS'}
+                                    {`Categoría ${category.categoria}`}
                                 </button>
                             ))}
                         </div>
                     </section>
 
-                    {/* Secciones de productos */}
-                    <section className={`p-6 space-y-6 ${activeSection !== 'pollos-fritos' ? 'hidden' : ''}`}>
-                        <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
-                            <div className="flex items-center space-x-6">
-                                <Image
-                                    src="/assets/img/carapollo2.png"
-                                    alt="Pollo Frito Pequeño"
-                                    width={100}
-                                    height={100}
-                                    className="rounded-lg shadow-lg"
-                                />
-                                <div>
-                                    <h3 className="text-2xl font-bold text-gray-800">POLLO FRITO PEQUEÑO</h3>
-                                    <span className="text-lg text-gray-600">10 BS</span>
+                    {/* Mostrar productos de la categoría seleccionada */}
+                    <section className="p-6 space-y-6">
+                        {productsByCategory.map((product) => (
+                            <div key={product.id} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
+                                <div className="flex items-center space-x-6">
+                                    <Image
+                                        src={product.imagen ? `http://localhost:8000/images/${product.imagen}` : '/assets/img/default.png'}
+                                        alt={product.nombre || 'Imagen predeterminada'}
+                                        width={100}
+                                        height={100}
+                                        className="rounded-lg shadow-lg"
+                                    />
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-gray-800">{product.nombre}</h3>
+                                        <span className="text-lg text-gray-600">{product.precio} BS</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    <button
+                                        className="w-10 h-10 text-white bg-yellow-500 rounded-full btn"
+                                        onClick={() => updateQuantity(product.id, 'decrementar')}
+                                    >
+                                        -
+                                    </button>
+                                    <span className="text-xl font-semibold text-gray-700">{quantities[product.id] || 0}</span>
+                                    <button
+                                        className="w-10 h-10 text-white bg-red-500 rounded-full btn"
+                                        onClick={() => updateQuantity(product.id, 'incrementar')}
+                                    >
+                                        +
+                                    </button>
                                 </div>
                             </div>
-                            <div className="flex items-center space-x-4">
-                                <button className="w-10 h-10 text-white bg-yellow-500 rounded-full btn" onClick={() => updateQuantity('cantidad-pollo-pequeno', 'decrementar')}>-</button>
-                                <span className="text-xl font-semibold text-gray-700">{quantities['cantidad-pollo-pequeno']}</span>
-                                <button className="w-10 h-10 text-white bg-red-500 rounded-full btn" onClick={() => updateQuantity('cantidad-pollo-pequeno', 'incrementar')}>+</button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className={`p-6 space-y-6 ${activeSection !== 'completos' ? 'hidden' : ''}`}>
-                        <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
-                            <div className="flex items-center space-x-6">
-                                <Image
-                                    src="/assets/img/sopa.png"
-                                    alt="Sopa de Pollo"
-                                    width={100}
-                                    height={100}
-                                    className="rounded-lg shadow-lg"
-                                />
-                                <div>
-                                    <h3 className="text-2xl font-bold text-gray-800">SOPA DE POLLO</h3>
-                                    <span className="text-lg text-gray-600">8 BS</span>
-                                </div>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                <button className="w-10 h-10 text-white bg-yellow-500 rounded-full btn" onClick={() => updateQuantity('cantidad-sopa', 'decrementar')}>-</button>
-                                <span className="text-xl font-semibold text-gray-700">{quantities['cantidad-sopa']}</span>
-                                <button className="w-10 h-10 text-white bg-red-500 rounded-full btn" onClick={() => updateQuantity('cantidad-sopa', 'incrementar')}>+</button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className={`p-6 space-y-6 ${activeSection !== 'refrescos' ? 'hidden' : ''}`}>
-                        <div className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
-                            <div className="flex items-center space-x-6">
-                                <Image
-                                    src="/assets/img/coca.png"
-                                    alt="Coca Cola"
-                                    width={100}
-                                    height={100}
-                                    className="rounded-lg shadow-lg"
-                                />
-                                <div>
-                                    <h3 className="text-2xl font-bold text-gray-800">COCA COLA</h3>
-                                    <span className="text-lg text-gray-600">7 BS</span>
-                                </div>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                <button className="w-10 h-10 text-white bg-yellow-500 rounded-full btn" onClick={() => updateQuantity('cantidad-coca', 'decrementar')}>-</button>
-                                <span className="text-xl font-semibold text-gray-700">{quantities['cantidad-coca']}</span>
-                                <button className="w-10 h-10 text-white bg-red-500 rounded-full btn" onClick={() => updateQuantity('cantidad-coca', 'incrementar')}>+</button>
-                            </div>
-                        </div>
+                        ))}
                     </section>
 
                     <footer className="px-6 py-4 flex flex-col md:flex-row justify-between items-center bg-red-100">
                         <div className="text-lg font-semibold text-gray-700 md:mr-auto">
-                            Total: <span className="text-red-500">{total} BS</span>
+                            Total: <span className="text-red-500">{total.toFixed(2)} BS</span>
                         </div>
 
                         <div className="flex space-x-4 mt-4 md:mt-0">
