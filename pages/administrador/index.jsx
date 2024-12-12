@@ -53,8 +53,18 @@ export default function HomeAdm() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/administrador/subirproducto/SubirProducto">
+                                    <span className="nav-link text-white hover:text-red-300" onClick={handleMenuOptionClick}>Crear Productos</span>
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="#clientes">
                                     <span className="nav-link text-white hover:text-red-300" onClick={handleMenuOptionClick}>Inventario</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/administrador/kitchen">
+                                    <span className="nav-link text-white hover:text-red-300" onClick={handleMenuOptionClick}>Pedidos</span>
                                 </Link>
                             </li>
                             <li>
@@ -133,6 +143,11 @@ export default function HomeAdm() {
                     <p className="text-lg text-red-700">
                         Genera reportes detallados para analizar el rendimiento de tu negocio.
                     </p>
+                    <Link href="/administrador/grafico/grafico">
+                        <button className="mt-4 bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-400">
+                            Verificar
+                        </button>
+                    </Link>
                 </section>
             </main>
 
