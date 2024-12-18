@@ -18,22 +18,35 @@ const Home = () => {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                if (!token) throw new Error('No autenticado');
 
-                const response = await axios.get('http://localhost:8000/api/user', {
+                // Si no hay token, el usuario no está autenticado
+                if (!token) {
+                    console.log('Usuario no autenticado. Continuando como invitado...');
+                    setUserName('Invitado');
+                    return; // Salir sin intentar hacer la solicitud
+                }
+
+                // Si hay token, intentamos verificar la sesión
+                const response = await axios.get('http://localhost:8000/api/check-session', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
+
+                // Si la solicitud fue exitosa, establecemos el nombre del usuario
                 setUserName(response.data.name);
             } catch (error) {
                 console.error('Error al obtener datos del usuario:', error);
+
+                // Si hay un error, el usuario se considera como invitado
                 setUserName('Invitado');
             } finally {
+                // Independientemente del resultado, dejamos de mostrar el loading
                 setLoading(false);
             }
         };
 
         fetchUserData();
     }, []);
+
 
 
 
@@ -210,7 +223,7 @@ const Home = () => {
                                         <p className="mb-4 text-black">Precio: ${product.precio}</p>
                                         <button
                                             className="btn bg-green-500 text-white"
-                                            onClick={() => addToCart({ id: product.id, name: product.nombre, price: product.precio })}
+                                            onClick={() => addToCart({ id: product.id, name: product.nombre, price: product.precio, imagen: product.imagen })}
                                         >
                                             Comprar
                                         </button>

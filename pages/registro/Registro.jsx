@@ -2,6 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
+import Nav from '../../components/navBar/Nav';
+
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,11 +34,17 @@ export default function Login() {
             setServerError('');
             try {
                 const response = await axios.post('http://localhost:8000/api/login', { email, password });
-                const { token, user } = response.data;
+                console.log("Respuesta del servidor: ", response.data);
 
-                // Guarda el token y redirige
-                localStorage.setItem('token', token);
-                router.push('/cliente');
+                // Aquí accedemos al token y los datos del usuario
+                const { access_token, user } = response.data;
+
+                // Guarda el token y los datos del usuario en el localStorage
+                localStorage.setItem('token', access_token);
+                localStorage.setItem('user', JSON.stringify(user)); // Guardamos los datos del usuario como string
+
+                // Redirige a la ruta de FinalizarPedido
+                router.push('/pedido/FinalizarPedido');
             } catch (error) {
                 setServerError(error.response?.data?.message || 'Error de red.');
             } finally {
@@ -45,8 +53,13 @@ export default function Login() {
         }
     };
 
+
+
     return (
         <div className="h-screen bg-gray-100">
+            <header id="navbar" className="bg-black fixed w-full top-0 left-0 z-50">
+                <Nav />
+            </header>
             <div
                 className="bg-cover bg-center min-h-[90vh] flex flex-col justify-center items-center"
                 style={{ backgroundImage: "url('/assets/img/fondopollo.jpg')" }}

@@ -2,15 +2,20 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import { FaHistory, FaShoppingCart } from 'react-icons/fa';
+import { FaCreditCard, FaCashRegister, FaPaypal } from 'react-icons/fa';
+import DetallePedido from './DetallePedido'; // Ensure correct path
 
 const VentaProducto = () => {
     const [activeSection, setActiveSection] = useState('');
     const [categories, setCategories] = useState([]);
     const [productsByCategory, setProductsByCategory] = useState([]);
     const [quantities, setQuantities] = useState({});
-    const [orderId, setOrderId] = useState(''); // Para el ID del pedido
+    const [orderId, setOrderId] = useState('');
+    const [metodoPago, setMetodoPago] = useState('');
+    const [pedidoDetails, setPedidoDetails] = useState([]);
+    const [totalPedido, setTotalPedido] = useState('0.00 BS');
 
-    // Obtener categorías y productos desde el backend
+    // Fetch categories and products
     useEffect(() => {
         const fetchCategoriesAndProducts = async () => {
             try {
@@ -18,7 +23,6 @@ const VentaProducto = () => {
                 const fetchedCategories = response.data.categories;
                 setCategories(fetchedCategories);
 
-                // Establecer la primera categoría como activa por defecto
                 if (fetchedCategories.length > 0) {
                     setActiveSection(fetchedCategories[0].categoria);
                     setProductsByCategory(fetchedCategories[0].productos);
@@ -32,35 +36,64 @@ const VentaProducto = () => {
         fetchCategoriesAndProducts();
     }, []);
 
-    const updateQuantity = (id, operation) => {
+    const updateQuantity = (product, operation) => {
+        const { id, precio, nombre } = product;
+
         setQuantities((prevQuantities) => {
             const currentQuantity = prevQuantities[id] || 0;
             const newQuantity =
                 operation === 'incrementar' ? currentQuantity + 1 : Math.max(0, currentQuantity - 1);
+
+            // Update pedido details when quantity changes
+            setPedidoDetails(prevDetails => {
+                // Remove existing entry for this product
+                const filteredDetails = prevDetails.filter(item => item.producto.id !== id);
+
+                // If new quantity is greater than 0, add to details
+                if (newQuantity > 0) {
+                    const orderItem = {
+                        producto: {
+                            id: id,
+                            nombre: nombre,
+                            precio: precio
+                        },
+                        cantidad: newQuantity,
+                        fechaRegistro: new Date().toLocaleString(),
+                        promocion: false, // You can implement logic to check for promotions
+                        descuento: 0, // You can implement discount logic
+                        subtotal: (precio * newQuantity).toFixed(2)
+                    };
+                    return [...filteredDetails, orderItem];
+                }
+
+                return filteredDetails;
+            });
+
             return { ...prevQuantities, [id]: newQuantity };
         });
     };
 
-    const total = productsByCategory.reduce((acc, product) => {
-        const quantity = quantities[product.id] || 0;
-        return acc + (product.precio * quantity);
+    const total = pedidoDetails.reduce((acc, item) => {
+        return acc + parseFloat(item.subtotal);
     }, 0);
 
     const confirmarPedido = async () => {
         const pedidoDate = {
-            pedido: productsByCategory.map((product) => ({
-                nombre: product.nombre,
-                cantidad: quantities[product.id] || 0,
+            pedido: pedidoDetails.map(item => ({
+                nombre: item.producto.nombre,
+                cantidad: item.cantidad,
+                precio: item.producto.precio,
+                subtotal: item.subtotal,
+                promocion: item.promocion,
+                descuento: item.descuento
             })),
             total: `${total.toFixed(2)} BS`,
         };
 
-        console.log("Datos del pedido:", JSON.stringify(pedidoDate, null, 2));
-
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/pedidos', pedidoDate);
             console.log("Respuesta del backend:", response.data);
-            setOrderId(response.data.id); // Guardar el ID del pedido recibido del backend
+            setOrderId(response.data.id);
             alert("Pedido guardado correctamente.");
         } catch (error) {
             console.error("Error al guardar el pedido:", error.response);
@@ -76,7 +109,7 @@ const VentaProducto = () => {
 
     return (
         <div className="bg-red-100">
-            {/* Barra de Navegación */}
+            {/* Navigation Bar */}
             <nav className="bg-red-900 text-white py-4 shadow-md">
                 <div className="container mx-auto flex justify-between items-center">
                     <div className="flex space-x-6">
@@ -101,9 +134,9 @@ const VentaProducto = () => {
                         <h2 className="text-4xl font-bold">PEDIDOS</h2>
                     </header>
 
+                    {/* Category Buttons */}
                     <section className="px-6 py-4">
                         <div className="flex justify-center space-x-4 md:space-x-8 mt-4 flex-wrap">
-                            {/* Botones dinámicos para categorías */}
                             {categories.map((category) => (
                                 <button
                                     key={category.categoria}
@@ -119,7 +152,7 @@ const VentaProducto = () => {
                         </div>
                     </section>
 
-                    {/* Mostrar productos de la categoría seleccionada */}
+                    {/* Products Section */}
                     <section className="p-6 space-y-6">
                         {productsByCategory.map((product) => (
                             <div key={product.id} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -139,14 +172,14 @@ const VentaProducto = () => {
                                 <div className="flex items-center space-x-4">
                                     <button
                                         className="w-10 h-10 text-white bg-yellow-500 rounded-full btn"
-                                        onClick={() => updateQuantity(product.id, 'decrementar')}
+                                        onClick={() => updateQuantity(product, 'decrementar')}
                                     >
                                         -
                                     </button>
                                     <span className="text-xl font-semibold text-gray-700">{quantities[product.id] || 0}</span>
                                     <button
                                         className="w-10 h-10 text-white bg-red-500 rounded-full btn"
-                                        onClick={() => updateQuantity(product.id, 'incrementar')}
+                                        onClick={() => updateQuantity(product, 'incrementar')}
                                     >
                                         +
                                     </button>
@@ -155,16 +188,43 @@ const VentaProducto = () => {
                         ))}
                     </section>
 
+                    {/* Table Selection */}
+                    <section className="mb-8 p-6 bg-gray-50 shadow-md rounded-md">
+                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Seleccionar Mesa</h2>
+                        <select
+                            value={metodoPago}
+                            onChange={(e) => setMetodoPago(e.target.value)}
+                            className="w-full p-3 border-2 border-gray-300 rounded-md text-gray-700 mb-4"
+                        >
+                            <option value="">Mesas Disponibles</option>
+                            <option value="Mesa"> 1</option>
+                            <option value="Mesa"> 2</option>
+                            <option value="Mesa"> 3</option>
+                        </select>
+                        <div className="flex justify-around text-2xl">
+                            {metodoPago === 'Mesa' && <FaCreditCard />}
+                            {metodoPago === 'Mesa' && <FaCashRegister />}
+                            {metodoPago === 'Mesa' && <FaPaypal />}
+                        </div>
+                    </section>
+
+                    {/* Order Details Component */}
+                    <DetallePedido
+                        pedido={pedidoDetails}
+                        total={`${total.toFixed(2)} BS`}
+                    />
+
+                    {/* Footer */}
                     <footer className="px-6 py-4 flex flex-col md:flex-row justify-between items-center bg-red-100">
                         <div className="text-lg font-semibold text-gray-700 md:mr-auto">
                             Total: <span className="text-red-500">{total.toFixed(2)} BS</span>
                         </div>
 
                         <div className="flex space-x-4 mt-4 md:mt-0">
-                            <button className="flex items-center bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-semibold py-2 px-6 rounded-lg btn">
-                                <i className="ri-file-list-3-line mr-2"></i> Detalles Pedido
-                            </button>
-                            <button className="flex items-center bg-green-500 hover:bg-green-600 text-white text-lg font-semibold py-2 px-6 rounded-lg btn" onClick={confirmarPedido}>
+                            <button
+                                className="flex items-center bg-green-500 hover:bg-green-600 text-white text-lg font-semibold py-2 px-6 rounded-lg btn"
+                                onClick={confirmarPedido}
+                            >
                                 <i className="ri-check-line mr-2"></i> Confirmar Pedido
                             </button>
                         </div>
